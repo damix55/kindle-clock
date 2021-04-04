@@ -1,0 +1,14 @@
+calendar:
+  url: [[CalDAV URL]]
+  username: [[CalDAV username]]
+  password: [[CalDAV password]]
+  calendars: 
+  - [[List of calendars to include]]
+
+telegram:
+  token: [[Telegram token]]
+  username: [[Telegram username]]
+
+ticktick:
+  username: [[TickTick username]]
+  password: [[TickTick password]]
