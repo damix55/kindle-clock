@@ -20,14 +20,14 @@ def get_events():
     calendars = principal.calendars()
 
     events = []
-    today = datetime.today()
+    now = datetime.now()
 
     calendars = [c for c in calendars if c.name in config['calendars']]
 
     for c in calendars:
         events_fetched = c.date_search(
-            start = today.replace(hour=00, minute=00, second=00),
-            end = today.replace(hour=23, minute=59, second=59)
+            start = now,
+            end = now.replace(hour=23, minute=59, second=59)
         )
 
         for e in events_fetched:

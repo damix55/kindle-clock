@@ -29,7 +29,7 @@ def main():
 
     # Check for updates of events and todos every 15 minutes
     schedule.every(15).minutes.do(run_threaded, get_events)
-    schedule.every().minute.at(':50').do(run_threaded, get_todos)
+    schedule.every(1).hours.do(run_threaded, get_todos)
 
     schedule.every(6).hours.do(run_threaded, clear_log)
 

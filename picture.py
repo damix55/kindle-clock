@@ -6,7 +6,12 @@ import json
 import re
 
 
-def gen_clock():
+def gen_clock(mode):
+    modes = [gen_clock_0, gen_clock_1]
+    modes[mode]()
+
+
+def gen_clock_0():
     colors = {
         'dark_grey': '#464646',
         'grey': '#969696',
@@ -26,6 +31,7 @@ def gen_clock():
     event_title_font = ImageFont.truetype(font_condensed, 48)
     event_title_time = ImageFont.truetype(font_condensed, 36)
     todo_checkbox = ImageFont.truetype(font_symbols, 36)
+    todo_checkmark = ImageFont.truetype(font_symbols, 32)
 
     draw = ImageDraw.Draw(image)
 
@@ -60,7 +66,7 @@ def gen_clock():
         (margin_x, margin_y),
         hours,
         font=clock_font,
-        fill=colors['grey'],
+        fill=colors['dark_grey'],
         anchor='la'
     )
     draw.text(
@@ -76,7 +82,7 @@ def gen_clock():
         (size_x - margin_x, margin_y + 78),
         week_day.upper(),
         font=date_font,
-        fill=colors['grey'],
+        fill=colors['dark_grey'],
         anchor='ra'
     )
 
@@ -95,30 +101,48 @@ def gen_clock():
 
     margin_y_ev = margin_y
 
-    # fix colors and crop events
-
     for event in events[:2]:
+        start_h, start_m = event['start'].split(':')
+        end_h, end_m = event['end'].split(':')
+        
+        start_date = now.replace(hour=int(start_h), minute=int(start_m), second=0)
+        end_date = now.replace(hour=int(end_h), minute=int(end_m), second=0)
+
+        if int(end_date)<int(start_date):
+            end_date = end_date + timedelta(days=1)         # event on more days, temporary fix
+
+        if start_date <= now <= end_date:
+            rectangle_color = colors['dark_grey']
+            event_title_color = 'black'
+            event_time_color = colors['dark_grey']
+
+        else:
+            rectangle_color = colors['light_grey']
+            event_title_color = colors['dark_grey']
+            event_time_color = colors['grey']
+
+
         draw.rectangle([
             margin_x,
             margin_y_ev + 10,
             margin_x + 10,
             margin_y_ev + 90],
-            fill=colors['light_grey']
+            fill=rectangle_color
         )
 
         draw.text(
             (margin_x + 27, margin_y_ev),
             event['title'],
             font=event_title_font,
-            fill=colors['dark_grey'],
+            fill=event_title_color,
             anchor='la'
         )
 
         draw.text(
             (margin_x + 27, margin_y_ev + 49),
-            event['start'] + ' | ' + event['end'],
+            f'{start_h}.{start_m} | {end_h}.{end_m}',
             font=event_title_time,
-            fill=colors['grey'],
+            fill=event_time_color,
             anchor='la'
         )
 
@@ -128,21 +152,33 @@ def gen_clock():
     ### Todos
     
     for todo in todos[:4]:
+
+        if todo['completed']:
+            todo_color = colors['light_grey']
+            draw.text(
+                (margin_x + 404, margin_y + 11),
+                '\U0000E900',
+                font=todo_checkmark,
+                fill=todo_color,
+                anchor='la'
+            )
+
+        else:
+            todo_color = colors['dark_grey']
+
         draw.text(
             (margin_x + 400, margin_y + 15),
             '\U0000E901',
             font=todo_checkbox,
-            fill=colors['dark_grey'],
+            fill=todo_color,
             anchor='la'
         )
-
-        # if completed
 
         draw.text(
             (margin_x + 440, margin_y),
             todo['title'][:20],
             font=event_title_font,
-            fill=colors['dark_grey'],
+            fill=todo_color,
             anchor='la'
         )
 
@@ -152,8 +188,49 @@ def gen_clock():
     image = image.rotate(90, expand=True)
     image.save("tmp/clock.png", bits=4)
 
-    #image.show()
+    # image.show()
 
+
+def gen_clock_1():
+    image = Image.open("src/wait_clock.png").convert('L')
+    font_regular = 'fonts/Coolvetica.ttf'
+    clock_font = ImageFont.truetype(font_regular, 150)
+    question_mark_font = ImageFont.truetype(font_regular, 40)
+
+    now = datetime.now()
+    s = int(now.strftime('%S'))
+    if s >= 58:
+        now = now + timedelta(minutes=1)
+
+    hours = now.strftime('%H')
+    minutes = now.strftime('%M')
+
+    draw = ImageDraw.Draw(image)
+
+    clock_string = f'{hours}.{minutes}'
+
+    clock_width, _ = draw.textsize(clock_string, font=clock_font)
+
+    draw.text(
+        (54, 120),
+        clock_string,
+        font=clock_font,
+        fill='white',
+        anchor='la'
+    )
+
+    draw.text(
+        (80 + clock_width, 187),
+        '?',
+        font=question_mark_font,
+        fill='white',
+        anchor='la'
+    )
+
+    image = image.rotate(90, expand=True)
+    image.save("tmp/clock.png", bits=4)
+
+    # image.show()
 
 
 def convert_pic(filename, target, contrast=1, brightness=1, angle=90):
@@ -185,4 +262,4 @@ def convert_pic(filename, target, contrast=1, brightness=1, angle=90):
 
 
 if __name__ == "__main__":
-    gen_clock()
+    gen_clock_0()

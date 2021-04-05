@@ -1,6 +1,6 @@
 import subprocess
 import picture
-import os
+from pathlib import Path
 
 from datetime import datetime
 
@@ -28,19 +28,22 @@ def show_image(pic, refresh=False, clear=False):
         print('Setting picture')
 
 
-def get_mode():
+def open_or_create(path, default):
     try:
-        with open('tmp/mode', 'r') as f:
+        with open(path, 'r') as f:
             return f.read()
 
     except FileNotFoundError:
-        if not os.path.exists('tmp'):
-            os.mkdir('tmp')
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
 
-        with open('tmp/mode', 'w') as f:
-            f.write('clock')
+        with open(path, 'w') as f:
+            f.write(default)
 
-        return 'clock'
+        return default
+
+
+def get_mode():
+    return open_or_create('tmp/mode', 'clock')
 
 
 def set_mode(mode):
@@ -67,6 +70,15 @@ def show_picture():
     show_image('tmp/picture.png', refresh=True, clear=True)
 
 
+def get_clock_mode():
+    return int(open_or_create('tmp/clock_mode', '0'))
+
+
+def set_clock_mode(clock_mode):
+    with open('tmp/clock_mode', 'w') as f:
+        f.write(str(clock_mode))
+
+
 def show_clock():
     s = int(datetime.now().strftime('%S'))
     m = int(datetime.now().strftime('%M'))
@@ -80,6 +92,9 @@ def show_clock():
         refresh = False
         clear = False
 
-    picture.gen_clock()           
+    open_or_create('tmp/events.json', '[]')
+    open_or_create('tmp/todos.json', '[]')
+
+    picture.gen_clock(get_clock_mode())           
     show_image('tmp/clock.png', refresh=refresh, clear=clear)
     set_mode('clock')
