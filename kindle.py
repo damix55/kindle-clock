@@ -104,7 +104,7 @@ def submode_change(direction):
 
 
 def update_clock():
-    if get_mode == 'clock':
+    if get_mode() == 'clock':
         show_clock()
 
 

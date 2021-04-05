@@ -1,43 +1,53 @@
-import yaml
 import json
+import yaml
 
-from ticktick import api
-from datetime import datetime, timedelta
+from todoist.api import TodoistAPI
+from datetime import datetime
+from dateutil import tz
 
 
 def get_todos():
     with open('config.yml') as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)['ticktick']
+        token = yaml.load(file, Loader=yaml.FullLoader)['todoist']['token']
 
-    client = api.TickTickClient(config['username'], config['password'])
+    api = TodoistAPI(token)
+    api.sync()
 
-    tasks_todo = client.task.get_from_project(client.inbox_id)
-    tasks_completed = client.task.get_completed(datetime.now())
+    now = datetime.now()
+    timezone = tz.gettz(api.state['user']['tz_info']['timezone'])
 
-    temp_todo = []
+    todos = []
 
-    for task in tasks_todo:
-        due_date = datetime.strptime(task['dueDate'][:10], '%Y-%m-%d') + timedelta(days=1)
+    for item in api.state['items']:
+        due = item['due']
+        if due is not None:
+            due_date = datetime.strptime(due['date'], '%Y-%m-%d')
 
-        if due_date<=datetime.now():
-            temp_todo.append({
-                'title': task['title'],
-                'priority': task['priority'],
-                'due_date': due_date
-            })
+            if item['checked'] == 1:
+                date_completed = datetime.strptime(item['date_completed'], '%Y-%m-%dT%H:%M:%S%z').astimezone(tz=timezone)
+                if date_completed.date() != now.date():
+                    continue
 
-    temp_todo = sorted(temp_todo, key = lambda i: (i['due_date'], 1/i['priority']))
+            if due_date <= now:
+                todos.append({
+                    'title': item['content'],
+                    'priority': item['priority'],
+                    'due_date': due_date,
+                    'completed': item['checked']
+                })
 
-    tasks = [{'title':d['title'], 'completed': False} for d in temp_todo]
+    todos = sorted(todos, key = lambda i: (i['completed'], i['due_date'], 1/i['priority']))
 
-    for task in tasks_completed:
-        tasks.append({
-            'title': task['title'],
-            'completed': True
+    tasks_dump = []
+
+    for todo in todos:
+        tasks_dump.append({
+            'title': todo['title'],
+            'completed': todo['completed']==1
         })
 
     with open('tmp/todos.json', 'w') as f:
-        json.dump(tasks, f)
+        json.dump(tasks_dump, f)
         print('Todos updated')
 
 

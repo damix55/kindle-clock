@@ -10,5 +10,4 @@ telegram:
   username: [[Telegram username]]
 
 ticktick:
-  username: [[TickTick username]]
-  password: [[TickTick password]]
+  token: [[Todoist token]]
