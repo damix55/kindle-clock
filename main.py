@@ -25,7 +25,7 @@ def main():
 
     # Schedule the clock update every minute at 58 seconds, since it takes
     # approximately 2 seconds to generate the picture
-    schedule.every().minute.at(':58').do(run_threaded, kindle.show_clock)
+    schedule.every().minute.at(':58').do(run_threaded, kindle.update_clock)
 
     # Check for updates of events and todos every 15 minutes
     schedule.every(15).minutes.do(run_threaded, get_events)
@@ -68,10 +68,10 @@ def map_key(code):
 
     # when a key is pressed, run the corresponding function
     keys = {
-        193: None,                  # F23          left side down
-        104: None,                  # PageUp       left side up
-        191: None,                  # F21          right side down
-        109: None,                  # PageDown     right side up
+        193: kindle.submode_back,    # F23          left side down
+        104: kindle.submode_up,      # PageUp       left side up
+        191: kindle.submode_back,   # F21          right side down
+        109: kindle.submode_up,     # PageDown     right side up
         158: kindle.refresh,        # Back
         29:  kindle.show_picture,   # LeftControl
         139: kindle.show_clock,     # Menu

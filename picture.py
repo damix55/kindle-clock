@@ -108,8 +108,12 @@ def gen_clock_0():
         start_date = now.replace(hour=int(start_h), minute=int(start_m), second=0)
         end_date = now.replace(hour=int(end_h), minute=int(end_m), second=0)
 
-        if int(end_date)<int(start_date):
+        if int(end_h)<int(start_h):
             end_date = end_date + timedelta(days=1)         # event on more days, temporary fix
+
+
+        if end_date <= now:
+            continue
 
         if start_date <= now <= end_date:
             rectangle_color = colors['dark_grey']

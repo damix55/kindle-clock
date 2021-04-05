@@ -62,6 +62,7 @@ def is_battery_charging():
 
 def refresh():
     mode = get_mode()
+    clear_screen()
     eval(f'show_{mode}()')
 
 
@@ -77,6 +78,34 @@ def get_clock_mode():
 def set_clock_mode(clock_mode):
     with open('tmp/clock_mode', 'w') as f:
         f.write(str(clock_mode))
+
+
+def submode_back():
+    submode_change('back')
+
+def submode_up():
+    submode_change('up')
+
+
+def submode_change(direction):
+    mode = get_mode()
+    if mode == 'clock':
+        total_clock_modes = 2       # hardcoded for now...
+        submode = get_clock_mode()
+        if direction == 'up':
+            clock_mode = (submode+1)%total_clock_modes
+        else:
+            clock_mode = (submode-1)%total_clock_modes
+        
+        set_clock_mode(clock_mode)
+        print('Changing to clock', clock_mode)
+
+        refresh()
+
+
+def update_clock():
+    if get_mode == 'clock':
+        show_clock()
 
 
 def show_clock():
