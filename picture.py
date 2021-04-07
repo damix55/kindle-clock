@@ -154,13 +154,17 @@ def gen_clock_0():
 
 
     ### Todos
+
+    if events != []:
+        margin_x = margin_x + 400
+
     
     for todo in todos[:4]:
 
         if todo['completed']:
             todo_color = colors['light_grey']
             draw.text(
-                (margin_x + 404, margin_y + 11),
+                (margin_x + 4, margin_y + 11),
                 '\U0000E900',
                 font=todo_checkmark,
                 fill=todo_color,
@@ -171,7 +175,7 @@ def gen_clock_0():
             todo_color = colors['dark_grey']
 
         draw.text(
-            (margin_x + 400, margin_y + 15),
+            (margin_x, margin_y + 15),
             '\U0000E901',
             font=todo_checkbox,
             fill=todo_color,
@@ -179,7 +183,7 @@ def gen_clock_0():
         )
 
         draw.text(
-            (margin_x + 440, margin_y),
+            (margin_x + 40, margin_y),
             todo['title'][:20],
             font=event_title_font,
             fill=todo_color,
@@ -189,10 +193,10 @@ def gen_clock_0():
         margin_y = margin_y + 58
 
 
-    image = image.rotate(90, expand=True)
-    image.save("tmp/clock.png", bits=4)
+    #image = image.rotate(90, expand=True)
+    #image.save("tmp/clock.png", bits=4)
 
-    # image.show()
+    image.show()
 
 
 def gen_clock_1():
