@@ -101,6 +101,8 @@ def gen_clock_0():
 
     margin_y_ev = margin_y
 
+    n_events = 0
+
     for event in events[:2]:
         start_h, start_m = event['start'].split(':')
         end_h, end_m = event['end'].split(':')
@@ -114,6 +116,8 @@ def gen_clock_0():
 
         if end_date <= now:
             continue
+
+        n_events = n_events + 1
 
         if start_date <= now <= end_date:
             rectangle_color = colors['dark_grey']
@@ -155,7 +159,7 @@ def gen_clock_0():
 
     ### Todos
 
-    if events != []:
+    if n_events > 0:
         margin_x = margin_x + 400
 
     
@@ -193,10 +197,10 @@ def gen_clock_0():
         margin_y = margin_y + 58
 
 
-    #image = image.rotate(90, expand=True)
-    #image.save("tmp/clock.png", bits=4)
+    image = image.rotate(90, expand=True)
+    image.save("tmp/clock.png", bits=4)
 
-    image.show()
+    #image.show()
 
 
 def gen_clock_1():
