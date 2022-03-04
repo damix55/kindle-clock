@@ -1,13 +1,15 @@
 calendar:
-  url: [[CalDAV URL]]
-  username: [[CalDAV username]]
-  password: [[CalDAV password]]
+  url: ''
+  username: ''
+  password: ''
   calendars: 
-  - [[List of calendars to include]]
+  - ''
+  - ''
+  - ''
 
 telegram:
-  token: [[Telegram token]]
-  username: [[Telegram username]]
+  token: ''
+  username: ''
 
-ticktick:
-  token: [[Todoist token]]
+todoist:
+  token: ''

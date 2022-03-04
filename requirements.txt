@@ -3,3 +3,4 @@ python-telegram-bot
 caldav
 pillow
 todoist-python
+schedule
