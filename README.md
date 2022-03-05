@@ -27,7 +27,7 @@ This was only tested on 4th generation Kindle, firmware version 4.1.4. I don't k
 * Reboot the device and test if SSH works at startup
 
 ### Installing Python and screen
-* Plug in the Kindle and copy the content of the `python` in `bin.zip` folder to the Kindle's USB drive's root 
+* Plug in the Kindle and copy the content of the `python` folder in `bin.zip` to the Kindle's USB drive's root 
 * Safely remove the USB cable and update the Kindle ([Menu] -> Settings -> [Menu] -> Update Your Kindle)
 * Once the device restarts, install pip by running `python3 -m ensurepip --upgrade`
 * Copy the content of the `screen` folder in `bin.zip` to `/mnt/us/bin`
